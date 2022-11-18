@@ -136,17 +136,6 @@ unsafeEmbedIOinPure p = unsafeDupableEmbedParserIO (liftIO noDuplicate >> p)
 unsafeDupableEmbedIOinPure :: ParserIO e a -> Parser e a
 unsafeDupableEmbedIOinPure = unsafeCoerce
 
-takeBs :: Int -> ParserST st e BS.ByteString
-takeBs (I# n#) = takeBs# n#
-
-takeBs# :: Int# -> ParserST st e BS.ByteString
-takeBs# n# = ParserST \fp eob s st -> case n# <=# minusAddr# eob s of
-  1# -> -- have to runtime check for negative values, because they cause a hang
-    case n# >=# 0# of
-      1# -> OK# st (BS.PS (ForeignPtr s fp) 0 (I# n#)) (plusAddr# s n#)
-      _  -> error "FlatParse.Basic.takeBs: negative integer"
-  _  -> Fail# st
-
 liftST :: ST s a -> ParserST s e a
 liftST (ST t) = ParserST \fp eob s st -> 
   case t st of
