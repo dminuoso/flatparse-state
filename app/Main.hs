@@ -124,15 +124,17 @@ runParserIO (ParserST f) b@(BS.PS (ForeignPtr _ fp) _ (I# len)) = do
       Err# rw' e ->  (# rw', Err e #)
       Fail# rw'  ->  (# rw', Fail #)
 
+embedIOinST :: ParserIO e a -> ParserST s e a
+embedIOinST = unsafeCoerce
 
-embedParserST :: ParserST s e a -> Parser e a
-embedParserST = unsafeCoerce
+unsafeEmbedSTinPure :: ParserST s e a -> Parser e a
+unsafeEmbedSTinPure = unsafeCoerce
 
-unsafeEmbedParserIO :: ParserIO e a -> Parser e a
-unsafeEmbedParserIO p = unsafeDupableEmbedParserIO (liftIO noDuplicate >> p)
+unsafeEmbedIOinPure :: ParserIO e a -> Parser e a
+unsafeEmbedIOinPure p = unsafeDupableEmbedParserIO (liftIO noDuplicate >> p)
 
-unsafeDupableEmbedParserIO :: ParserIO e a -> Parser e a
-unsafeDupableEmbedParserIO = unsafeCoerce
+unsafeDupableEmbedIOinPure :: ParserIO e a -> Parser e a
+unsafeDupableEmbedIOinPure = unsafeCoerce
 
 takeBs :: Int -> ParserST st e BS.ByteString
 takeBs (I# n#) = takeBs# n#
