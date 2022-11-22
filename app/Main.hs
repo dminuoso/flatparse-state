@@ -131,7 +131,7 @@ unsafeEmbedSTinPure :: ParserST s e a -> Parser e a
 unsafeEmbedSTinPure = unsafeCoerce
 
 unsafeEmbedIOinPure :: ParserIO e a -> Parser e a
-unsafeEmbedIOinPure p = unsafeDupableEmbedParserIO (liftIO noDuplicate >> p)
+unsafeEmbedIOinPure p = unsafeDupableEmbedIOinPure (liftIO noDuplicate >> p)
 
 unsafeDupableEmbedIOinPure :: ParserIO e a -> Parser e a
 unsafeDupableEmbedIOinPure = unsafeCoerce
